@@ -3,6 +3,7 @@ package com.coolweather.app.activity;
 
 import com.coolweather.app.R;
 import com.coolweather.app.model.WeatherInfo;
+import com.coolweather.app.service.AutoUpdateService;
 import com.coolweather.app.util.HttpCallbackListener;
 import com.coolweather.app.util.HttpUtil;
 import com.coolweather.app.util.Utility;
@@ -86,6 +87,8 @@ public class WeatherActivity extends Activity implements android.view.View.OnCli
 		descText.setText(share.getString("weather_desp",""));
 		degreeText.setText(share.getString("temp1","")+"  ~ "+share.getString("temp2","")+" ");
 		findViewById(R.id.weather_info_layout).setVisibility(View.VISIBLE);
+		Intent i = new Intent(this,AutoUpdateService.class);
+		startService(i);
 	}
 
 	@Override

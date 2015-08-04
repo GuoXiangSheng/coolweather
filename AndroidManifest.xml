@@ -24,6 +24,9 @@
         <activity android:name="com.coolweather.app.activity.WeatherActivity"
             android:theme="@android:style/Theme.Black.NoTitleBar"
             ></activity>
+        
+        <receiver android:name="com.coolweather.app.receiver.AutoUpdateReceiver"/>
+        <service android:name="com.coolweather.app.service.AutoUpdateService"></service>
     </application>
 
 </manifest>
