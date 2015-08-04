@@ -7,6 +7,7 @@ import com.coolweather.app.db.CoolWeatherDB;
 import com.coolweather.app.model.City;
 import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
+import com.coolweather.app.model.WeatherInfo;
 import com.coolweather.app.util.HttpCallbackListener;
 import com.coolweather.app.util.HttpUtil;
 import com.coolweather.app.util.Utility;
@@ -14,6 +15,8 @@ import com.coolweather.app.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -43,15 +46,26 @@ public class ChooseAreaActivity extends Activity {
 	private Province selectedProvince; //选中的省份
 	private City selectedCity;  //选中的城市
 	
+
 	/**
 	* 当前选中的级别
 	*/
 	private int currentLevel;
 	
+	private boolean isFromWetherActivity; //是否是从天气窗体跳过来
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		isFromWetherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
+		SharedPreferences share = getSharedPreferences("weather", MODE_PRIVATE);
+		//如果已选择过城市和不是从天气窗体跳过来的。则直接进入到天气窗体
+		if(share.getBoolean("city_selected", false) && !isFromWetherActivity){
+			Intent intent = new Intent(this,WeatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		titleTv = (TextView) findViewById(R.id.title);
@@ -70,6 +84,11 @@ public class ChooseAreaActivity extends Activity {
 				}else if(currentLevel == LEVEL_CITY){
 					selectedCity = cityList.get(position);
 					queryCounty();
+				}else{
+					Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+					intent.putExtra("cityCode", countyList.get(position).getCountyCode());
+					startActivity(intent);
+					finish();
 				}
 			}
 		});
@@ -220,6 +239,10 @@ public class ChooseAreaActivity extends Activity {
 		}else if(currentLevel == LEVEL_COUNTY){
 			queryCity();
 		}else {
+			if(isFromWetherActivity){
+				Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+				startActivity(intent);
+			}
 			finish();
 		}
 	}
